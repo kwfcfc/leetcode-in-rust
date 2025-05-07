@@ -1,6 +1,6 @@
 [English Version »](./README.en.md)
 
-# Hello World Rust 项目（支持 Devcontainer）
+# LeetCode Top 150 Problems Rust 项目（支持 Devcontainer）
 
 这是一个使用 [Devcontainer](https://containers.dev/) 快速启动的 Rust 示例项目，适合在 VS Code / VSCodium 中进行容器化开发。
 
@@ -13,8 +13,8 @@
 ├── .git/                  # Git 仓库元数据
 ├── .gitignore             # Git 忽略文件规则
 ├── Cargo.toml             # Rust 项目配置文件
-└── src/
-    └── main.rs            # 主程序入口
+└── leetcode-**/
+    └── src/lib.rs         # 解题库的单元测试
 ```
 
 ## 🚀 开发环境说明

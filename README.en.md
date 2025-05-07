@@ -1,6 +1,6 @@
 [中文版说明 »](./README.md)
 
-# Hello World Rust Project (Devcontainer Enabled)
+# LeetCode Top 150 Problems Project (Devcontainer Enabled)
 
 This is a minimal Rust example project configured for containerized development using [Devcontainer](https://containers.dev/), ideal for use with VS Code or VSCodium.
 
@@ -13,8 +13,8 @@ This is a minimal Rust example project configured for containerized development 
 ├── .git/                  # Git repository metadata
 ├── .gitignore             # Git ignore rules
 ├── Cargo.toml             # Rust project configuration
-└── src/
-    └── main.rs            # Main program entry point
+└── leetcode-**/
+    └── src/lib.rs         # lib program with unit tests
 ```
 
 ## 🚀 Development Environment
