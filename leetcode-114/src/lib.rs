@@ -47,7 +47,7 @@ impl Solution {
 
                 borrowed.left = None;
                 borrowed.right = Some(Rc::new(RefCell::new(TreeNode::new(*value))));
-                
+
                 iter = borrowed.right.clone();
             }
         }
@@ -104,6 +104,7 @@ mod test {
 
     flatten_test!(test_empty, vec![] => vec![]);
     flatten_test!(test_single, vec![Some(1)] => vec![1]);
+    flatten_test!(test_balanced, vec![Some(1), Some(2), Some(3)] => vec![1, 2, 3]);
     flatten_test!(
         test_sample,
         vec![Some(1), Some(2), Some(5), Some(3), Some(4), None, Some(6)] =>
