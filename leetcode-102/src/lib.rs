@@ -19,40 +19,41 @@ impl TreeNode {
 
 pub struct Solution;
 
-use std::cmp::max;
+use std::collections::VecDeque;
 use std::rc::Rc;
 use std::cell::RefCell;
-use std::vec;
-
 
 impl Solution {
     pub fn level_order(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<Vec<i32>> {
-        if let Some(node) = root {
-            let root_node = node.borrow();
-            let mut result: Vec<Vec<i32>> = vec![vec![root_node.val]];
+        let mut vec_queue = VecDeque::new();
+        let mut result = Vec::<Vec<i32>>::new();
 
-            let left_level = Self::level_order(root_node.left.clone());
-            let right_level = Self::level_order(root_node.right.clone());
-            result.extend(Self::merge_vec(left_level, right_level));
-            return result;
-        }
-        vec![]
-    }
+        let root_node = match root {
+            Some(node)  => node,
+            None => return result,
+        };
 
-    fn merge_vec(left: Vec<Vec<i32>>, right: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
-        let result_len = max(left.len(), right.len());
-        let mut result = Vec::<Vec<i32>>::with_capacity(result_len);
-        for i in 0..result_len {
-            match (left.get(i), right.get(i)) {
-                (Some(v_left), Some(v_right)) => {
-                    let mut merged = v_left.clone();
-                    merged.extend_from_slice(&v_right);
-                    result.push(merged);
+        vec_queue.push_back(root_node);
+
+        while !vec_queue.is_empty() {
+            let mut level_vec = Vec::<i32>::new();
+            let level_length = vec_queue.len();
+
+            for _ in 0..level_length {
+                if let Some(current_node) = vec_queue.pop_front() {
+                    let borrow = current_node.borrow();
+
+                    level_vec.push(borrow.val);
+                    if let Some(left_node) = &borrow.left {
+                        vec_queue.push_back(left_node.clone());
+                    }
+
+                    if let Some(right_node) = &borrow.right {
+                        vec_queue.push_back(right_node.clone());
+                    }
                 }
-                (Some(v_left), None) => result.push(v_left.clone()),
-                (None, Some(v_right)) => result.push(v_right.clone()),
-                (None, None) => {}
             }
+            result.push(level_vec);
         }
         result
     }
