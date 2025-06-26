@@ -23,70 +23,49 @@ use std::cell::RefCell;
 use std::collections::VecDeque;
 use std::rc::Rc;
 
-enum Side {
-    Left,
-    Right,
-}
-
-impl Side {
-    fn flip(&self) -> Side {
-        match self {
-            Side::Left => Side::Right,
-            Side::Right => Side::Left,
-        }
-    }
-}
-
 impl Solution {
     pub fn zigzag_level_order(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<Vec<i32>> {
         let mut vec_deque = VecDeque::new();
         let mut result = Vec::<Vec<i32>>::new();
-        let mut flip = Side::Left;
 
-        let root_node = match root {
-            Some(node) => node,
-            None => return result,
-        };
+        if let Some(root_node) = root {
+            vec_deque.push_back(root_node);
+        } else {
+            return result;
+        }
 
-        vec_deque.push_back(root_node);
+        let mut left_to_right = true;
 
         while !vec_deque.is_empty() {
             let mut level_vec = Vec::<i32>::new();
             let level_length = vec_deque.len();
-            match flip {
-                Side::Left => {
-                    for _index in 0..level_length {
-                        if let Some(current_node) = vec_deque.pop_front() {
-                            let borrow = current_node.borrow();
-                            level_vec.push(borrow.val);
-                            if let Some(left_node) = &borrow.left {
-                                vec_deque.push_back(left_node.clone());
-                            }
-
-                            if let Some(right_node) = &borrow.right {
-                                vec_deque.push_back(right_node.clone());
-                            }
-                        }
+            for _index in 0..level_length {
+                if left_to_right {
+                    let current_node = vec_deque.pop_front().unwrap();
+                    let borrow = current_node.borrow();
+                    level_vec.push(borrow.val);
+                    if let Some(left_node) = &borrow.left {
+                        vec_deque.push_back(left_node.clone());
                     }
-                }
-                Side::Right => {
-                    for _index in 0..level_length {
-                        if let Some(current_node) = vec_deque.pop_back() {
-                            let borrow = current_node.borrow();
-                            level_vec.push(borrow.val);
 
-                            if let Some(right_node) = &borrow.right {
-                                vec_deque.push_front(right_node.clone());
-                            }
-                                                        
-                            if let Some(left_node) = &borrow.left {
-                                vec_deque.push_front(left_node.clone());
-                            }
-                        }
+                    if let Some(right_node) = &borrow.right {
+                        vec_deque.push_back(right_node.clone());
+                    }
+                } else {
+                    let current_node = vec_deque.pop_back().unwrap();
+                    let borrow = current_node.borrow();
+                    level_vec.push(borrow.val);
+
+                    if let Some(right_node) = &borrow.right {
+                        vec_deque.push_front(right_node.clone());
+                    }
+
+                    if let Some(left_node) = &borrow.left {
+                        vec_deque.push_front(left_node.clone());
                     }
                 }
             }
-            flip = flip.flip();
+            left_to_right = !left_to_right;
             result.push(level_vec);
         }
 
