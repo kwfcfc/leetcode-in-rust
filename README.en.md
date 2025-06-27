@@ -1,8 +1,10 @@
 [中文版说明 »](./README.md)
 
-# LeetCode Top 150 Problems Project (Devcontainer Enabled)
+# LeetCode Problems Project (Devcontainer Enabled)
 
-This is a minimal Rust example project configured for containerized development using [Devcontainer](https://containers.dev/), ideal for use with VS Code or VSCodium.
+This is a Rust project configured for containerized development using 
+[Devcontainer](https://containers.dev/), ideal for use with VS Code or VSCodium
+to practice Leetcode problem.
 
 ## 📦 Project Structure
 
@@ -13,6 +15,8 @@ This is a minimal Rust example project configured for containerized development 
 ├── .git/                  # Git repository metadata
 ├── .gitignore             # Git ignore rules
 ├── Cargo.toml             # Rust project configuration
+├── rustfmt.toml           # Configuration for Rust code formatting
+├── rust-toolchain.toml    # Configuration for Rust toolchain version
 └── leetcode-**/
     └── src/lib.rs         # lib program with unit tests
 ```
@@ -38,15 +42,7 @@ This is a minimal Rust example project configured for containerized development 
 Once inside the container terminal, run:
 
 ```bash
-cargo run
+cargo test --lib
 ```
 
-You should see:
-
-```
-Hello, world!
-```
-
-## 📄 License
-
-This project is licensed under the MIT License.
+You should see the test results of leetcode solutions in the project.

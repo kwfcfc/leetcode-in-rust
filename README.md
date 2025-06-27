@@ -1,8 +1,9 @@
 [English Version »](./README.en.md)
 
-# LeetCode Top 150 Problems Rust 项目（支持 Devcontainer）
+# LeetCode Problems Rust 项目（支持 Devcontainer）
 
-这是一个使用 [Devcontainer](https://containers.dev/) 快速启动的 Rust 示例项目，适合在 VS Code / VSCodium 中进行容器化开发。
+这是一个使用 [Devcontainer](https://containers.dev/) 快速启动的 Rust 项目，适合在
+ VS Code / VSCodium 中进行容器化开发，练习Leetcode算法题。
 
 ## 📦 项目结构
 
@@ -13,6 +14,8 @@
 ├── .git/                  # Git 仓库元数据
 ├── .gitignore             # Git 忽略文件规则
 ├── Cargo.toml             # Rust 项目配置文件
+├── rustfmt.toml           # Rust 格式化工具配置
+├── rust-toolchain.toml    # Rust 工具链版本配置
 └── leetcode-**/
     └── src/lib.rs         # 解题库的单元测试
 ```
@@ -38,15 +41,7 @@
 容器启动后，在终端运行以下命令：
 
 ```bash
-cargo run
+cargo test --lib
 ```
 
-输出应为：
-
-```
-Hello, world!
-```
-
-## 📄 许可证
-
-本项目使用 MIT 许可证。
+输出应为项目内 Leetcode 题目的测试结果。
