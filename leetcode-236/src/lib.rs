@@ -28,27 +28,23 @@ impl Solution {
         q: Option<Rc<RefCell<TreeNode>>>,
     ) -> Option<Rc<RefCell<TreeNode>>> {
         let root_node = root?;
-        let p_node = p?;
-        let q_node = q?;
 
-        if p_node == root_node {
-            return Some(p_node);
-        } else if q_node == root_node {
-            return Some(q_node);
+        if p == Some(root_node.clone()) {
+            return p;
+        } else if q == Some(root_node.clone()) {
+            return q;
         }
 
         let root_ref = root_node.borrow();
 
         let (left_node, right_node) = (root_ref.left.clone(), root_ref.right.clone());
-        let (search_left, search_right) = (
-            Self::lowest_common_ancestor(left_node, Some(p_node.clone()), Some(q_node.clone())),
-            Self::lowest_common_ancestor(right_node, Some(p_node.clone()), Some(q_node.clone())),
-        );
+        let search_left = Self::lowest_common_ancestor(left_node, p.clone(), q.clone());
+        let search_right = Self::lowest_common_ancestor(right_node, p.clone(), q.clone());
 
         match (search_left, search_right) {
             (None, some_right) => some_right,
             (some_left, None) => some_left,
-           _ => Some(root_node.clone())
+            _ => Some(root_node.clone()),
         }
     }
 }
