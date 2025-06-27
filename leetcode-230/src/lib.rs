@@ -1,52 +1,49 @@
 // Definition for a binary tree node.
 #[derive(Debug, PartialEq, Eq)]
 pub struct TreeNode {
-  pub val: i32,
-  pub left: Option<Rc<RefCell<TreeNode>>>,
-  pub right: Option<Rc<RefCell<TreeNode>>>,
+    pub val: i32,
+    pub left: Option<Rc<RefCell<TreeNode>>>,
+    pub right: Option<Rc<RefCell<TreeNode>>>,
 }
 
 impl TreeNode {
-  #[inline]
-  pub fn new(val: i32) -> Self {
-    TreeNode {
-      val,
-      left: None,
-      right: None
+    #[inline]
+    pub fn new(val: i32) -> Self {
+        TreeNode {
+            val,
+            left: None,
+            right: None,
+        }
     }
-  }
 }
 
 pub struct Solution;
 
-use std::rc::Rc;
 use std::cell::RefCell;
+use std::rc::Rc;
+
 impl Solution {
-    fn tree_length(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-        if let Some(root_node) = root {
-            let root_ref = root_node.borrow();
-            return 1 + Self::tree_length(root_ref.left.clone()) + Self::tree_length(root_ref.right.clone());
-        } else {
-            0
-        }
-    }
-
     pub fn kth_smallest(root: Option<Rc<RefCell<TreeNode>>>, k: i32) -> i32 {
-        if let Some(root_node) = root {
-            let root_node_ref = root_node.borrow();
-
-            let left_tree_length = Self::tree_length(root_node_ref.left.clone());
-
-            if k - 1 == left_tree_length {
-                root_node_ref.val
-            } else if k - 1 < left_tree_length {
-                Self::kth_smallest(root_node_ref.left.clone(), k)
-            } else {
-                Self::kth_smallest(root_node_ref.right.clone(), k - 1 - left_tree_length)
+        let mut counter = k;
+        let mut result = -1;
+        fn dfs(root: Option<Rc<RefCell<TreeNode>>>, counter: &mut i32, result: &mut i32) -> () {
+            if root.is_none() {
+                return;
             }
-        } else {
-            -1
+            let root_node = root.unwrap();
+            let root_ref = root_node.borrow();
+            dfs(root_ref.left.clone(), counter, result);
+            if *counter == 0 {
+                return;
+            }
+            *counter -= 1;
+            if *counter == 0 {
+                *result = root_ref.val;
+            }
+            dfs(root_ref.right.clone(), counter, result);
         }
+        dfs(root, &mut counter, &mut result);
+        result
     }
 }
 
