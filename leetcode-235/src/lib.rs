@@ -27,24 +27,38 @@ impl Solution {
         p: Option<Rc<RefCell<TreeNode>>>,
         q: Option<Rc<RefCell<TreeNode>>>,
     ) -> Option<Rc<RefCell<TreeNode>>> {
-        let root_node = root?;
+        let root_ref = root?;
+        let p_ref = p?;
+        let q_ref = q?;
 
-        if p == Some(root_node.clone()) {
-            return p;
-        } else if q == Some(root_node.clone()) {
-            return q;
+        if p_ref.borrow().val == root_ref.borrow().val {
+            return Some(p_ref);
+        } else if q_ref.borrow().val == root_ref.borrow().val {
+            return Some(q_ref);
         }
 
-        let root_ref = root_node.borrow();
+        let (root_val, p_val, q_val) = (
+            root_ref.borrow().val,
+            p_ref.borrow().val,
+            q_ref.borrow().val,
+        );
 
-        let (left_node, right_node) = (root_ref.left.clone(), root_ref.right.clone());
-        let search_left = Self::lowest_common_ancestor(left_node, p.clone(), q.clone());
-        let search_right = Self::lowest_common_ancestor(right_node, p.clone(), q.clone());
+        let mut vec = vec![root_val, p_val, q_val];
+        vec.sort();
 
-        match (search_left, search_right) {
-            (None, some_right) => some_right,
-            (some_left, None) => some_left,
-            _ => Some(root_node.clone()),
+        match (vec[0], vec[1], vec[2]) {
+            (root, _, _) if root == root_val => Self::lowest_common_ancestor(
+                root_ref.borrow().right.clone(),
+                Some(p_ref),
+                Some(q_ref),
+            ),
+            (_, _, root) if root == root_val => Self::lowest_common_ancestor(
+                root_ref.borrow().left.clone(),
+                Some(p_ref),
+                Some(q_ref),
+            ),
+            (_, root, _) if root == root_val => Some(root_ref),
+            _ => None,
         }
     }
 }
@@ -78,34 +92,27 @@ mod tests {
         val1: i32,
         val2: i32,
     ) -> (Option<Rc<RefCell<TreeNode>>>, Option<Rc<RefCell<TreeNode>>>) {
-        fn helper(
+        fn find_node(
             node: &Option<Rc<RefCell<TreeNode>>>,
-            val1: i32,
-            val2: i32,
-            found1: &mut Option<Rc<RefCell<TreeNode>>>,
-            found2: &mut Option<Rc<RefCell<TreeNode>>>,
-        ) {
-            if let Some(n) = node {
+            target: i32,
+        ) -> Option<Rc<RefCell<TreeNode>>> {
+            let mut cur = node.clone();
+            while let Some(n) = cur {
                 let n_borrow = n.borrow();
-                if n_borrow.val == val1 {
-                    *found1 = Some(Rc::clone(n));
+                if n_borrow.val == target {
+                    return Some(n.clone());
+                } else if target < n_borrow.val {
+                    cur = n_borrow.left.clone();
+                } else {
+                    cur = n_borrow.right.clone();
                 }
-                if n_borrow.val == val2 {
-                    *found2 = Some(Rc::clone(n));
-                }
-                // return if both are found
-                if found1.is_some() && found2.is_some() {
-                    return;
-                }
-                helper(&n_borrow.left, val1, val2, found1, found2);
-                helper(&n_borrow.right, val1, val2, found1, found2);
             }
+            None
         }
 
-        let mut found1 = None;
-        let mut found2 = None;
-        helper(root, val1, val2, &mut found1, &mut found2);
-        (found1, found2)
+        let node1 = find_node(root, val1);
+        let node2 = find_node(root, val2);
+        (node1, node2)
     }
 
     #[macro_export]
@@ -123,7 +130,7 @@ mod tests {
         };
     }
 
-    tree_ancestor_test!(test_child, (vec![Some(3),Some(5),Some(1),Some(6),Some(2),Some(0),Some(8),None,None,Some(7),Some(4)], 5, 4) => 5);
-    tree_ancestor_test!(test_sibling, (vec![Some(3),Some(5),Some(1),Some(6),Some(2),Some(0),Some(8),None,None,Some(7),Some(4)], 5, 1) => 3);
-    tree_ancestor_test!(test_simple, (vec![Some(1),Some(2)], 1, 2) => 1);
+    tree_ancestor_test!(test_child, (vec![Some(6),Some(2),Some(8),Some(0),Some(4),Some(7),Some(9),None,None,Some(3),Some(5)], 2, 4) => 2);
+    tree_ancestor_test!(test_sibling, (vec![Some(6),Some(2),Some(8),Some(0),Some(4),Some(7),Some(9),None,None,Some(3),Some(5)], 2, 8) => 6);
+    tree_ancestor_test!(test_simple, (vec![Some(1),None,Some(2)], 1, 2) => 1);
 }
