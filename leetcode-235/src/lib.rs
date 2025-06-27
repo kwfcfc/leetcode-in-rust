@@ -20,6 +20,7 @@ impl TreeNode {
 pub struct Solution;
 
 use std::cell::RefCell;
+use std::cmp::{max, min};
 use std::rc::Rc;
 impl Solution {
     pub fn lowest_common_ancestor(
@@ -28,14 +29,7 @@ impl Solution {
         q: Option<Rc<RefCell<TreeNode>>>,
     ) -> Option<Rc<RefCell<TreeNode>>> {
         let root_ref = root?;
-        let p_ref = p?;
-        let q_ref = q?;
-
-        if p_ref.borrow().val == root_ref.borrow().val {
-            return Some(p_ref);
-        } else if q_ref.borrow().val == root_ref.borrow().val {
-            return Some(q_ref);
-        }
+        let (p_ref, q_ref) = (p?, q?);
 
         let (root_val, p_val, q_val) = (
             root_ref.borrow().val,
@@ -43,22 +37,14 @@ impl Solution {
             q_ref.borrow().val,
         );
 
-        let mut vec = vec![root_val, p_val, q_val];
-        vec.sort();
+        let (smaller, larger) = (min(p_val, q_val), max(p_val, q_val));
 
-        match (vec[0], vec[1], vec[2]) {
-            (root, _, _) if root == root_val => Self::lowest_common_ancestor(
-                root_ref.borrow().right.clone(),
-                Some(p_ref),
-                Some(q_ref),
-            ),
-            (_, _, root) if root == root_val => Self::lowest_common_ancestor(
-                root_ref.borrow().left.clone(),
-                Some(p_ref),
-                Some(q_ref),
-            ),
-            (_, root, _) if root == root_val => Some(root_ref),
-            _ => None,
+        if root_val < smaller {
+            Self::lowest_common_ancestor(root_ref.borrow().right.clone(), Some(p_ref), Some(q_ref))
+        } else if root_val > larger {
+            Self::lowest_common_ancestor(root_ref.borrow().left.clone(), Some(p_ref), Some(q_ref))
+        } else {
+            Some(root_ref)
         }
     }
 }
