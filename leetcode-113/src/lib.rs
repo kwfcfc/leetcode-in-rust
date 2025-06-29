@@ -62,7 +62,7 @@ mod tests {
     use super::*;
     use std::collections::VecDeque;
 
-    fn from_vec(data: &[Option<i32>]) -> Option<Rc<RefCell<TreeNode>>> {
+    fn from_unbalanced_vec(data: &[Option<i32>]) -> Option<Rc<RefCell<TreeNode>>> {
         if data.is_empty() || data[0].is_none() {
             return None;
         }
@@ -102,7 +102,7 @@ mod tests {
             #[test]
             fn $name() {
                 let original = $input;
-                let tree = from_vec(&original);
+                let tree = from_unbalanced_vec(&original);
                 let result = Solution::path_sum(tree, $sum);
                 assert_eq!(result, $output);
             }
