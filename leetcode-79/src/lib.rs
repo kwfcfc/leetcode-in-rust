@@ -3,93 +3,95 @@ use std::char;
 pub struct Solution;
 
 impl Solution {
-    fn flat_match(
-        string_list: &[char], // flattened vector
-        row_size: usize,
-        start: usize,
-        word: &[char],
-        index: usize,
-        selected: &mut Vec<bool>,
-    ) -> bool {
-        if index == word.len() {
-            return true;
-        }
-
-        let mut candidates = vec![];
-
-        if start + 1 < string_list.len()
-            && (start + 1) % row_size != 0
-            && !selected[start + 1]
-        {
-            candidates.push(start + 1);
-        }
-        if start % row_size != 0 && !selected[start - 1] {
-            candidates.push(start - 1);
-        }
-        if start >= row_size && !selected[start - row_size] {
-            candidates.push(start - row_size);
-        }
-        if start + row_size < string_list.len() && !selected[start + row_size] {
-            candidates.push(start + row_size);
-        }
-
-        for &next in candidates.iter() {
-            if string_list[next] == word[index] {
-                selected[next] = true;
-                if Self::flat_match(
-                    string_list,
-                    row_size,
-                    next,
-                    word,
-                    index + 1,
-                    selected,
-                ) {
-                    return true;
-                }
-                selected[next] = false;
-            }
-        }
-
-        false
-    }
-
     pub fn exist(board: Vec<Vec<char>>, word: String) -> bool {
-        if word.is_empty() {
-            return true;
-        }
-
-        let row_size = board[0].len();
-        let flatten: Vec<char> = board.into_iter().flatten().collect();
-
-        let start: Vec<usize> = flatten
-            .iter()
-            .enumerate()
-            .filter(|(_i, c)| word.starts_with(**c))
-            .map(|(i, _)| i)
-            .collect();
-
-        if start.is_empty() {
-            return false;
-        } else if word.len() == 1 {
-            return true;
-        }
-
-        let mut selected = vec![false; flatten.len()];
-        let word_vector: Vec<char> = word.chars().collect();
-
-        for &start_index in start.iter() {
-            selected[start_index] = true;
-            if Self::flat_match(
-                &flatten,
-                row_size,
-                start_index,
-                &word_vector,
-                1,
-                &mut selected,
-            ) {
+        fn dfs(
+            board: &mut Vec<Vec<char>>,
+            word: &[u8],
+            index: usize,
+            pos: (usize, usize),
+            boundary: (usize, usize),
+        ) -> bool {
+            let ((i, j), (m, n)) = (pos, boundary);
+            if board[i][j] != word[index] as char {
+                return false;
+            }
+            if index == word.len() - 1 {
                 return true;
             }
-            selected[start_index] = false;
+            board[i][j] = '\0'; // mark as visited
+            for (x, y) in [
+                (i, j.saturating_sub(1)),
+                (i, j + 1),
+                (i.saturating_sub(1), j),
+                (i + 1, j),
+            ] {
+                if x < m
+                    && y < n
+                    && dfs(board, word, index + 1, (x, y), boundary)
+                {
+                    return true;
+                }
+            }
+
+            board[i][j] = word[index] as char;
+            false // not found
+        }
+
+        let map_alphabet_to_ascii = |c: u8| {
+            if c.is_ascii_lowercase() {
+                Some(c as usize - 'a' as usize)
+            } else if c.is_ascii_uppercase() {
+                Some(c as usize - 'A' as usize + 26)
+            } else {
+                None
+            }
+        };
+
+        // optimization 1: count the word frequency
+        let mut char_count = [0u8; 52]; // 26 uppercase and 26 lowercase English word
+        for r in &board {
+            for &c in r {
+                if let Some(index) = map_alphabet_to_ascii(c as u8) {
+                    char_count[index] += 1;
+                }
+            }
+        }
+
+        let mut word_count = [0u8; 52];
+        let word_bytes = word.as_bytes();
+        for &c in word.as_bytes() {
+            if let Some(index) = map_alphabet_to_ascii(c) {
+                word_count[index] += 1;
+                // return false if there is not enough char in the graph
+                if word_count[index] > char_count[index] {
+                    return false;
+                }
+            }
+        }
+
+        // Optimization II: count which way has less frequency, normal or reverse
+        let word_mut = if let (Some(start), Some(end)) = (
+            map_alphabet_to_ascii(word_bytes[0]),
+            map_alphabet_to_ascii(word_bytes[word_bytes.len() - 1]),
+        ) {
+            if start > end {
+                word.chars().rev().collect()
+            } else {
+                word.clone()
+            }
+        } else {
+            word.clone()
+        };
+
+        let mut mutable = board.clone();
+        let boundary = (board.len(), board[0].len());
+
+        for i in 0..boundary.0 {
+            for j in 0..boundary.1 {
+                if dfs(&mut mutable, word_mut.as_bytes(), 0, (i, j), boundary) {
+                    return true;
+                }
+            }
         }
 
         false
@@ -97,6 +99,7 @@ impl Solution {
 }
 
 #[cfg(test)]
+#[rustfmt::skip]
 mod tests {
     use super::*;
 
