@@ -34,6 +34,13 @@ impl Solution {
             _ => f64::NAN,
         }
     }
+    pub fn my_c_pow(x: f64, n: i32) -> f64 {
+        unsafe { myPow(x, n) }
+    }
+}
+
+unsafe extern "C" {
+    unsafe fn myPow(x: f64, n: i32) -> f64;
 }
 
 #[cfg(test)]
@@ -47,11 +54,21 @@ mod tests {
             fn $name() {
                 let result = Solution::my_pow($base, $power);
                 let abs_difference = (result - $output).abs();
-                dbg!(abs_difference);
                 assert!(abs_difference <= 1e-14);
             }
         };
     }
+
+    macro_rules! pow_c_test {
+        ($name: ident, ($base: literal, $power: literal) => $output: literal) => {
+            #[test]
+            fn $name() {
+                let result = Solution::my_c_pow($base, $power);
+                let abs_difference = (result - $output).abs();
+                assert!(abs_difference <= 1e-14);
+            }
+        };
+    }    
 
     pow_test!(test_simple_pow, (2.00000, 10) => 1024.00000);
     pow_test!(test_second_pow, (2.10000, 3) => 9.26100);
@@ -59,4 +76,11 @@ mod tests {
     pow_test!(test_too_small, (2.00, -200000000) => 0.0);
     pow_test!(test_negative_base, (-2.00000, 2) => 4.00000);
     pow_test!(test_one_any_pow, (1.0000, -2147483648) => 1.0000);
+    
+    pow_c_test!(test_c_simple_pow, (2.00000, 10) => 1024.00000);
+    pow_c_test!(test_c_second_pow, (2.10000, 3) => 9.26100);
+    pow_c_test!(test_c_negative_pow, (2.00000, -2) => 0.25000);
+    pow_c_test!(test_c_too_small, (2.00, -200000000) => 0.0);
+    pow_c_test!(test_c_negative_base, (-2.00000, 2) => 4.00000);
+    pow_c_test!(test_c_one_any_pow, (1.0000, -2147483648) => 1.0000);    
 }
