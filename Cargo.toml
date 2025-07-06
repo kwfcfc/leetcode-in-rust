@@ -1,12 +1,15 @@
 [workspace]
-members = [ "leetcode-101",
+members = [
+    "leetcode-101",
     "leetcode-102",
     "leetcode-103",
     "leetcode-104",
+    "leetcode-110",
     "leetcode-113",
     "leetcode-114",
     "leetcode-207",
-    "leetcode-215", "leetcode-226",
+    "leetcode-215",
+    "leetcode-226",
     "leetcode-228",
     "leetcode-230",
     "leetcode-235",
@@ -16,8 +19,10 @@ members = [ "leetcode-101",
     "leetcode-39",
     "leetcode-40",
     "leetcode-46",
-    "leetcode-47", "leetcode-50",
-    "leetcode-724", "leetcode-79",
+    "leetcode-47",
+    "leetcode-50",
+    "leetcode-724",
+    "leetcode-79",
 ]
 resolver = "3"
 
