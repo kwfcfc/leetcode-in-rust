@@ -1,5 +1,5 @@
 [workspace]
-members = [
+members = [ "leetcode-101",
     "leetcode-102",
     "leetcode-103",
     "leetcode-104",
