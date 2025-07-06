@@ -2,40 +2,37 @@ pub struct Solution;
 
 impl Solution {
     pub fn my_pow(x: f64, n: i32) -> f64 {
-        if x == 0.0 {
-            if n > 0 {
-                return 0.0;
-            } else {
-                return f64::NAN;
+        match n {
+            0 if x != 0.0 => 1.0,
+            _ if x == 1.0 => 1.0,
+            _ if x == -1.0 => {
+                if n % 2 == 0 {
+                    1.0
+                } else {
+                    -1.0
+                }
             }
-        } else if x == 1.0 {
-            return 1.0;
-        } else if x == -1.0 {
-            match n % 2 == 0 {
-                true => return 1.0,
-                false => return -1.0,
+            1 => x,
+            i32::MIN => 0.0,
+            negative if n < 0 => Solution::my_pow(1.0 / x, -negative),
+            even if n % 2 == 0 => {
+                let abs_x = x.abs();
+                if abs_x < f64::EPSILON / abs_x {
+                    0.0
+                } else {
+                    Solution::my_pow(abs_x * abs_x, even / 2)
+                }
             }
+            odd if n % 2 != 0 => {
+                let abs_x = x.abs();
+                if abs_x < f64::EPSILON / abs_x {
+                    0.0
+                } else {
+                    x * Solution::my_pow(abs_x * abs_x, odd / 2)
+                }
+            }
+            _ => f64::NAN,
         }
-        let mut result = 1.0;
-        let mut pow = n;
-        let mut base = x;
-
-        if pow < 0 {
-            if pow > i32::MIN {
-                pow = -pow;
-                base = 1.0 / base
-            } else {
-                return 0.0;
-            }
-        }
-        while pow != 0 {
-            if (pow & 1).is_positive() {
-                result *= base;
-            }
-            base *= base;
-            pow >>= 1;
-        }
-        result
     }
 }
 
