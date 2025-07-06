@@ -16,7 +16,7 @@ members = [ "leetcode-101",
     "leetcode-39",
     "leetcode-40",
     "leetcode-46",
-    "leetcode-47",
+    "leetcode-47", "leetcode-50",
     "leetcode-724", "leetcode-79",
 ]
 resolver = "3"
