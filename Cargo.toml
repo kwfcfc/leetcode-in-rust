@@ -15,7 +15,7 @@ members = [
     "leetcode-235",
     "leetcode-236",
     "leetcode-27",
-    "leetcode-287",
+    "leetcode-287", "leetcode-297",
     "leetcode-39",
     "leetcode-40",
     "leetcode-46",
