@@ -21,25 +21,28 @@ pub struct Solution;
 
 use std::rc::Rc;
 use std::cell::RefCell;
+use std::collections::HashMap;
 impl Solution {
     pub fn build_tree(preorder: Vec<i32>, inorder: Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
-        fn tree_helper(preorder: &[i32], inorder: &[i32]) -> Option<Rc<RefCell<TreeNode>>> {
+        let index_hash: HashMap<i32, usize> = inorder.iter().enumerate().map(|(i, &val)| (val, i)).collect();
+        fn tree_helper(preorder: &[i32], inorder: &[i32], hash: &HashMap<i32, usize>) -> Option<Rc<RefCell<TreeNode>>> {
             if preorder.is_empty() {
                 return None;
             }
             let mut root = TreeNode::new(preorder[0]);
-            let root_inorder = inorder.iter().position(|&r| r == preorder[0]).unwrap_or(0);
+            let root_preorder = hash.get(&inorder[0]).cloned().unwrap_or(0);
+            let root_inorder = hash.get(&preorder[0]).cloned().unwrap_or(0) - root_preorder;
 
             let left_preorder = if root_inorder != 0 { &preorder[1..=root_inorder] } else { &[] };
             let left_inorder = if !left_preorder.is_empty() { &inorder[0..root_inorder] } else { left_preorder };
             let right_preorder = if root_inorder != preorder.len() - 1 { &preorder[root_inorder+1..] } else { &[] };
             let right_inorder = if !right_preorder.is_empty() { &inorder[root_inorder+1..] } else { right_preorder };
 
-            root.left = tree_helper(left_preorder, left_inorder);
-            root.right = tree_helper(right_preorder, right_inorder);
+            root.left = tree_helper(left_preorder, left_inorder, hash);
+            root.right = tree_helper(right_preorder, right_inorder, hash);
             return Some(Rc::new(RefCell::new(root)));
         }
-        tree_helper(&preorder, &inorder)
+        tree_helper(&preorder, &inorder, &index_hash)
     }
 }
 
