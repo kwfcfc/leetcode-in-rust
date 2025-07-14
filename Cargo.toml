@@ -3,7 +3,7 @@ members = [
     "leetcode-101",
     "leetcode-102",
     "leetcode-103",
-    "leetcode-104",
+    "leetcode-104", "leetcode-105",
     "leetcode-110",
     "leetcode-113",
     "leetcode-114",

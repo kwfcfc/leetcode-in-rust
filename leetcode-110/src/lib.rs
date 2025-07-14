@@ -24,30 +24,24 @@ use std::cmp::max;
 use std::rc::Rc;
 impl Solution {
     pub fn is_balanced(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
-        fn depth(node: &Option<Rc<RefCell<TreeNode>>>) -> u16 {
+        fn depth(node: &Option<Rc<RefCell<TreeNode>>>) -> i16 {
             if let Some(tree) = node {
                 let borrow = tree.borrow();
-                1 + max(depth(&borrow.left), depth(&borrow.right))
-            } else {
+                let left_depth = depth(&borrow.left);
+                let right_depth = depth(&borrow.right);
+                if left_depth == -1 || right_depth == -1 {
+                    -1
+                } else if (left_depth - right_depth).abs() <= 1 {
+                    1 + max(left_depth, right_depth)
+                } else {
+                    -1
+                }
+            }
+            else {
                 0
             }
         }
-        if let Some(node) = root {
-            let borrow = node.borrow();
-            let left_depth = depth(&borrow.left);
-            let right_depth = depth(&borrow.right);
-            let difference = if left_depth > right_depth {
-                left_depth - right_depth
-            } else {
-                right_depth - left_depth
-            };
-
-            difference <= 1
-                && Self::is_balanced(borrow.left.clone())
-                && Self::is_balanced(borrow.right.clone())
-        } else {
-            true
-        }
+        depth(&root) != -1
     }
 }
 
