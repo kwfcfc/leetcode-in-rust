@@ -20,7 +20,7 @@ members = [
     "leetcode-40",
     "leetcode-46",
     "leetcode-47",
-    "leetcode-50",
+    "leetcode-50", "leetcode-509",
     "leetcode-724",
     "leetcode-79",
 ]
