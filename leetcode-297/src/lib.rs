@@ -20,12 +20,15 @@ impl TreeNode {
 use std::cell::RefCell;
 use std::collections::VecDeque;
 use std::rc::Rc;
+
+#[allow(dead_code)]
 struct Codec {}
 
 /**
  * `&self` means the method takes an immutable reference.
  * If you need a mutable reference, change it to `&mut self` instead.
  */
+#[allow(dead_code)]
 impl Codec {
     fn new() -> Self {
         Codec {}

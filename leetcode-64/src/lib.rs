@@ -4,29 +4,31 @@ pub struct Solution;
 
 impl Solution {
     pub fn min_path_sum(grid: Vec<Vec<i32>>) -> i32 {
-        let mut dp: Vec<Vec<i32>> = vec![vec![0; grid[0].len()]; grid.len()];
+        let m = grid.len();
+        let n = grid[0].len();
+        let mut dp: Vec<Vec<i32>> = vec![vec![0; n]; m];
 
         dp[0][0] = grid[0][0];
 
         // pre fill the first row
-        for i in 1..grid[0].len() {
+        for i in 1..n {
             dp[0][i] = dp[0][i - 1] + grid[0][i];
         }
 
         // pre fill the first column
-        for i in 1..grid.len() {
+        for i in 1..m {
             dp[i][0] = dp[i - 1][0] + grid[i][0];
         }
 
-        for i in 1..grid.len() {
-            for j in 1..grid[0].len() {
+        for i in 1..m {
+            for j in 1..n {
                 let left = dp[i][j - 1];
                 let up = dp[i - 1][j];
                 dp[i][j] = min(left, up) + grid[i][j];
             }
         }
 
-        dp[grid.len() - 1][grid[0].len() - 1]
+        dp[m - 1][n - 1]
     }
 }
 
