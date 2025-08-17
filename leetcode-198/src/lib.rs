@@ -19,10 +19,8 @@ impl Solution {
             let temp = neighbor;
             if neighbor < previous + num {
                 neighbor = previous + num;
-                previous = temp;
-            } else {
-                previous = neighbor;
             }
+            previous = temp;
         }
 
         neighbor
